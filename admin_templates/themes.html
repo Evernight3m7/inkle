@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Themes - {{ site_title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Themes</h1>
+</div>
+
+<div class="theme-grid">
+    {% for theme in themes %}
+    <div class="theme-card card {% if theme.name == active %}theme-active{% endif %}">
+        {% if theme.thumbnail %}
+        <div class="theme-thumbnail">
+            <img src="/static/theme/{{ theme.thumbnail }}" alt="{{ theme.title }}">
+        </div>
+        {% else %}
+        <div class="theme-thumbnail theme-thumbnail-placeholder">
+            <span>{{ theme.title | truncate(length=1, end="") }}</span>
+        </div>
+        {% endif %}
+        <div class="theme-info">
+            <h3>{{ theme.title }}</h3>
+            {% if theme.description %}
+            <p class="theme-description">{{ theme.description }}</p>
+            {% endif %}
+            {% if theme.author %}
+            <p class="theme-author">by {{ theme.author }}</p>
+            {% endif %}
+            {% if theme.version %}
+            <p class="theme-version">v{{ theme.version }}</p>
+            {% endif %}
+        </div>
+        <div class="theme-actions">
+            {% if theme.name == active %}
+            <span class="badge badge-active">Active</span>
+            {% else %}
+            <button class="btn btn-primary" onclick="activateTheme('{{ theme.name }}')">Activate</button>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No themes installed.</p>
+        <p class="text-secondary">Add theme folders to the <code>themes/</code> directory.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

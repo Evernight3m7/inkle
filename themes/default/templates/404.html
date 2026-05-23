@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Found - {{ global.config.site_title }}</title>
+    <link rel="stylesheet" href="/static/theme/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <h1><a href="/">{{ global.config.site_title }}</a></h1>
+        </div>
+    </header>
+
+    <main class="site-main">
+        <div class="not-found">
+            <div class="not-found-code">404</div>
+            <h1>Page Not Found</h1>
+            <p>The page you're looking for doesn't exist or has been moved.</p>
+            <a href="/" class="btn-home">Go Home</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span class="footer-copy">&copy; {{ global.config.site_title }}</span>
+        </div>
+    </footer>
+</body>
+</html>

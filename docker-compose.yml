@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    container_name: inkle
+    ports:
+      - "3000:3000"
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - JWT_SECRET=${JWT_SECRET:-change-me-to-a-random-string}
+      - DATABASE_URL=sqlite:/app/data/data.db?mode=rwc
+    volumes:
+      # Mount themes directory so new themes can be added without rebuilding
+      - ./themes:/app/themes
+      # Persist SQLite database file
+      - ./data:/app/data
+    restart: unless-stopped
+
+# ── Multi-architecture build ──
+# docker buildx create --name multiarch --use
+# docker buildx build --platform linux/amd64,linux/arm64 -t inkle .

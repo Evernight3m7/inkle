@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - {{ global.config.site_title }}</title>
+    <link rel="stylesheet" href="/static/theme/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <h1><a href="/">{{ global.config.site_title }}</a></h1>
+            {% if global.config.site_subtitle %}
+            <p class="site-subtitle">{{ global.config.site_subtitle }}</p>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="site-main">
+        <article class="post-detail">
+            <header class="post-detail-header">
+                <h1>{{ post.title }}</h1>
+                <div class="post-detail-meta">
+                    <time>{{ post.created_at | truncate(length=10, end="") }}</time>
+                    {% if post.category %}
+                    <span class="post-meta-divider">&middot;</span>
+                    <a href="/category/{{ post.category }}" class="category-link">{{ post.category }}</a>
+                    {% endif %}
+                </div>
+                {% if post.tags %}
+                <div class="tags-list">
+                    {% for tag in post.tags %}
+                    <a href="/tag/{{ tag }}" class="tag-badge">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </header>
+            <div class="prose">{{ post.content | safe }}</div>
+        </article>
+        <a href="/" class="back-link">&larr; Back to Home</a>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span class="footer-copy">&copy; {{ global.config.site_title }}</span>
+            <nav class="footer-links">
+                {% for key, url in global.config.social_links %}
+                <a href="{{ url }}" target="_blank" rel="noopener">{{ key }}</a>
+                {% endfor %}
+            </nav>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.querySelector(".prose"), {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "\\(", right: "\\)", display: false}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const hl = params.get('hl');
+            if (!hl) return;
+            const prose = document.querySelector('.prose');
+            if (!prose) return;
+            const walker = document.createTreeWalker(prose, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            let n;
+            while (n = walker.nextNode()) nodes.push(n);
+            for (const node of nodes) {
+                const idx = node.textContent.toLowerCase().indexOf(hl.toLowerCase());
+                if (idx !== -1) {
+                    const range = document.createRange();
+                    range.setStart(node, idx);
+                    range.setEnd(node, idx + hl.length);
+                    const mark = document.createElement('mark');
+                    mark.id = 'search-highlight';
+                    mark.style.background = 'rgba(99,102,241,0.25)';
+                    mark.style.color = '#4f46e5';
+                    mark.style.borderRadius = '3px';
+                    mark.style.padding = '0 3px';
+                    range.surroundContents(mark);
+                    mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    break;
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

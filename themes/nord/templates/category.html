@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ current_category }} - {{ global.config.site_title }}</title>
+    <link rel="stylesheet" href="/static/theme/style.css">
+</head>
+<body>
+    <div class="site-container">
+        <header class="site-header">
+            <div class="header-inner">
+                <h1><a href="/">{{ global.config.site_title }}</a></h1>
+                {% if global.config.site_subtitle %}
+                <p class="site-subtitle">{{ global.config.site_subtitle }}</p>
+                {% endif %}
+            </div>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h1>Category: {{ current_category }}</h1>
+                <p>{{ total_posts }} post{% if total_posts != 1 %}s{% endif %}</p>
+            </div>
+
+            {% if posts %}
+            {% for post in posts %}
+            <div class="post-item">
+                <h2><a href="/post/{{ post.slug }}">{{ post.title }}</a></h2>
+                <div class="post-meta">
+                    <time>{{ post.created_at | truncate(length=10, end="") }}</time>
+                </div>
+                {% if post.tags %}
+                <div class="tags-list">
+                    {% for tag in post.tags %}
+                    <a href="/tag/{{ tag }}" class="tag-badge">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <a href="/post/{{ post.slug }}" class="read-more">Read &rarr;</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">&#x1F4C2;</div>
+                <h2>No Posts</h2>
+                <p>No posts in this category yet.</p>
+            </div>
+            {% endif %}
+
+            {% if pagination.total > 1 %}
+            <nav class="pagination">
+                {% if pagination.prev %}
+                <a href="/category/{{ current_category }}?page={{ pagination.prev }}" class="pagination-btn">&larr; Prev</a>
+                {% endif %}
+                <span class="pagination-info">Page {{ pagination.current }} of {{ pagination.total }}</span>
+                {% if pagination.next %}
+                <a href="/category/{{ current_category }}?page={{ pagination.next }}" class="pagination-btn">Next &rarr;</a>
+                {% endif %}
+            </nav>
+            {% endif %}
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <span>&copy; {{ global.config.site_title }}</span>
+                <nav class="footer-links">
+                    {% for key, url in global.config.social_links %}
+                    <a href="{{ url }}" target="_blank" rel="noopener">{{ key }}</a>
+                    {% endfor %}
+                </nav>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

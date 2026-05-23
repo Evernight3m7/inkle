@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site_title }} - Login</title>
+    <link rel="stylesheet" href="/static/admin/admin.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card card">
+            <h1>{{ site_title }}</h1>
+            <p class="login-subtitle">Admin Login</p>
+            <form id="login-form" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="input" placeholder="Enter password" required autofocus>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                <p id="login-error" class="login-error" style="display:none;"></p>
+            </form>
+        </div>
+    </div>
+    <div id="toast-container" class="toast-container"></div>
+    <script src="/static/admin/admin.js"></script>
+</body>
+</html>

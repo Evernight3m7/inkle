@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - {{ global.config.site_title }}</title>
+    <link rel="stylesheet" href="/static/theme/style.css">
+</head>
+<body>
+    <div class="site-container">
+        <header class="site-header">
+            <div class="header-inner">
+                <h1><a href="/">{{ global.config.site_title }}</a></h1>
+            </div>
+        </header>
+
+        <main>
+            <div class="not-found">
+                <h1>404</h1>
+                <p>This page could not be found.</p>
+                <a href="/">&larr; Back to Home</a>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <span>&copy; {{ global.config.site_title }}</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

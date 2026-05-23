@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{% if is_new %}New Post{% else %}Edit - {{ post.title }}{% endif %} - {{ site_title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{% if is_new %}New Post{% else %}Edit Post{% endif %}</h1>
+</div>
+
+<form id="post-form" onsubmit="return false;" {% if not is_new %}data-post-id="{{ post.id }}"{% endif %}>
+    <div class="editor-grid">
+        <div class="editor-main card">
+            <div class="form-group">
+                <label for="post-title">Title</label>
+                <input type="text" id="post-title" class="input input-lg" value="{{ post.title }}" required placeholder="Post title...">
+            </div>
+
+            <div class="editor-toolbar">
+                <button type="button" class="btn btn-sm btn-primary" id="btn-raw" onclick="switchEditorMode('raw')">Raw</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="btn-preview" onclick="switchEditorMode('preview')">Preview</button>
+            </div>
+
+            <div id="editor-raw" class="editor-pane">
+                <textarea id="post-content" class="textarea editor-textarea" placeholder="Write your post content in Markdown...">{{ post.content }}</textarea>
+            </div>
+            <div id="editor-preview" class="editor-pane editor-preview-pane" style="display:none;">
+                <div id="preview-content" class="preview-content"></div>
+            </div>
+        </div>
+
+        <aside class="editor-sidebar card">
+            <div class="form-group">
+                <label for="post-slug">Slug</label>
+                <input type="text" id="post-slug" class="input" value="{{ post.slug }}" placeholder="Auto-generated from title">
+            </div>
+            <div class="form-group">
+                <label for="post-category">Category</label>
+                <input type="text" id="post-category" class="input" value="{{ post.category }}" list="category-list" placeholder="e.g. dev, life">
+                <datalist id="category-list"></datalist>
+            </div>
+            <div class="form-group">
+                <label for="post-tags">Tags (comma separated)</label>
+                <input type="text" id="post-tags" class="input" value="{% for tag in post.tags %}{{ tag }}{% if not loop.last %}, {% endif %}{% endfor %}" placeholder="tag1, tag2, tag3">
+            </div>
+            <div class="form-group">
+                <label for="post-status">Status</label>
+                <select id="post-status" class="select">
+                    <option value="draft" {% if post.status == 'draft' %}selected{% endif %}>Draft</option>
+                    <option value="published" {% if post.status == 'published' %}selected{% endif %}>Published</option>
+                </select>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary btn-block" onclick="savePost()">
+                    {% if is_new %}Publish{% else %}Save Changes{% endif %}
+                </button>
+                <a href="/admin" class="btn btn-secondary btn-block">Cancel</a>
+            </div>
+        </aside>
+    </div>
+</form>
+{% endblock %}
