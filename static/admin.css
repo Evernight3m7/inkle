@@ -239,6 +239,7 @@ a:hover { text-decoration: underline; }
     transition: var(--transition);
     line-height: 1.5;
 }
+.textarea { resize: vertical; transition: none; }
 .input:focus, .textarea:focus, .select:focus {
     outline: none;
     border-color: var(--border-focus);

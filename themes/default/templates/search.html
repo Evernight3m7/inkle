@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if query %}Search: {{ query }}{% else %}Search{% endif %} - {{ global.config.site_title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/theme/style.css">
 </head>
 <body>
@@ -22,13 +25,13 @@
         </div>
 
         <form class="search-form" action="/search" method="get">
-            <input type="text" name="q" value="{{ query }}" placeholder="Type to search..." autofocus>
+            <input type="search" name="q" value="{{ query }}" placeholder="Type to search..." autofocus>
             <button type="submit" class="search-btn">Search</button>
         </form>
 
         {% if query %}
         <div class="page-header">
-            <p>Results for "<strong>{{ query }}</strong>"</p>
+            <p>Results for &ldquo;{{ query }}&rdquo;</p>
         </div>
 
         {% if posts %}
@@ -54,14 +57,17 @@
                 <div class="post-snippet">{{ post.snippet | safe }}</div>
             </a>
             {% endif %}
-            <a href="/post/{{ post.slug }}" class="read-more">Read more &rarr;</a>
+            {% if post.abstract %}
+            <p class="post-abstract">{{ post.abstract | safe }}</p>
+            {% endif %}
+            <a href="/post/{{ post.slug }}" class="read-more">Read more</a>
         </article>
         {% endfor %}
         {% else %}
         <div class="empty-state">
             <div class="empty-state-icon">&#x1F50D;</div>
             <h2>No Results</h2>
-            <p>No posts found matching "{{ query }}".</p>
+            <p>No posts found matching &ldquo;{{ query }}&rdquo;.</p>
         </div>
         {% endif %}
         {% endif %}

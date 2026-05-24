@@ -339,6 +339,7 @@ pub async fn search_page(
                     category: r.category,
                     tags,
                     content: services::markdown::render_markdown(&r.content),
+                    r#abstract: services::markdown::render_markdown(&r.r#abstract),
                     created_at: r.created_at,
                     updated_at: r.updated_at,
                     snippet: r.snippet,

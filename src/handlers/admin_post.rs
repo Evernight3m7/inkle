@@ -139,15 +139,17 @@ pub async fn create(
     let category = body.category.unwrap_or_default();
     let tags = serde_json::to_string(&body.tags.unwrap_or_default()).unwrap_or_default();
     let status = body.status.unwrap_or_else(|| "draft".into());
+    let r#abstract = body.r#abstract.unwrap_or_default();
 
     let row: PostRow = sqlx::query_as(
-        "INSERT INTO posts (title, slug, category, tags, content, status) VALUES (?, ?, ?, ?, ?, ?) RETURNING *",
+        "INSERT INTO posts (title, slug, category, tags, content, abstract, status) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *",
     )
     .bind(&body.title)
     .bind(&slug)
     .bind(&category)
     .bind(&tags)
     .bind(&body.content)
+    .bind(&r#abstract)
     .bind(&status)
     .fetch_one(&state.db)
     .await
@@ -224,16 +226,18 @@ pub async fn update(
         .map(|t| serde_json::to_string(&t).unwrap_or_default())
         .unwrap_or(existing.tags);
     let content = body.content.unwrap_or(existing.content);
+    let r#abstract = body.r#abstract.unwrap_or(existing.r#abstract);
     let status = body.status.unwrap_or(existing.status);
 
     let row: PostRow = sqlx::query_as(
-        "UPDATE posts SET title=?, slug=?, category=?, tags=?, content=?, status=?, updated_at=datetime('now') WHERE id=? RETURNING *",
+        "UPDATE posts SET title=?, slug=?, category=?, tags=?, content=?, abstract=?, status=?, updated_at=datetime('now') WHERE id=? RETURNING *",
     )
     .bind(&title)
     .bind(&slug)
     .bind(&category)
     .bind(&tags)
     .bind(&content)
+    .bind(&r#abstract)
     .bind(&status)
     .bind(id)
     .fetch_one(&state.db)

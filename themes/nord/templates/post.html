@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ post.title }} - {{ global.config.site_title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,300;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/theme/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 </head>
 <body>
+    <div class="reading-progress" id="reading-progress"></div>
+
     <div class="site-container">
         <header class="site-header">
             <div class="header-inner">
@@ -37,6 +42,12 @@
                     </div>
                     {% endif %}
                 </header>
+                {% if post.abstract %}
+                <details class="post-abstract-details" open>
+                    <summary>摘要</summary>
+                    <div class="post-abstract-content">{{ post.abstract | safe }}</div>
+                </details>
+                {% endif %}
                 <div class="prose">{{ post.content | safe }}</div>
             </article>
             <a href="/" class="back-link">&larr; Back to Home</a>
@@ -53,6 +64,7 @@
             </div>
         </footer>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <script>
@@ -67,6 +79,19 @@
                 throwOnError: false
             });
         });
+    </script>
+    <script>
+        (function() {
+            const bar = document.getElementById('reading-progress');
+            if (bar) {
+                window.addEventListener('scroll', function() {
+                    const scrollTop = document.documentElement.scrollTop;
+                    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+                    bar.style.width = progress + '%';
+                });
+            }
+        })();
     </script>
     <script>
         (function() {
@@ -86,11 +111,7 @@
                     range.setStart(node, idx);
                     range.setEnd(node, idx + hl.length);
                     const mark = document.createElement('mark');
-                    mark.id = 'search-highlight';
-                    mark.style.background = 'rgba(136,192,208,0.3)';
-                    mark.style.color = '#88c0d0';
-                    mark.style.borderRadius = '2px';
-                    mark.style.padding = '0 3px';
+                    mark.classList.add('search-highlight');
                     range.surroundContents(mark);
                     mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     break;

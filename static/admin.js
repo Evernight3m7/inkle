@@ -131,6 +131,7 @@ async function savePost() {
         category: document.getElementById('post-category').value.trim() || null,
         tags: tags.length > 0 ? tags : null,
         content: document.getElementById('post-content').value,
+        abstract: document.getElementById('post-abstract').value.trim() || null,
         status: document.getElementById('post-status').value
     };
 

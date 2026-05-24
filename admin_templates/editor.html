@@ -28,6 +28,10 @@
 
         <aside class="editor-sidebar card">
             <div class="form-group">
+                <label for="post-abstract">Abstract</label>
+                <textarea id="post-abstract" class="textarea" rows="4" placeholder="Brief summary (Markdown supported)">{{ post.abstract }}</textarea>
+            </div>
+            <div class="form-group">
                 <label for="post-slug">Slug</label>
                 <input type="text" id="post-slug" class="input" value="{{ post.slug }}" placeholder="Auto-generated from title">
             </div>

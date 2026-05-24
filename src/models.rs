@@ -43,6 +43,8 @@ pub struct PostRow {
     pub category: String,
     pub tags: String, // JSON array string from DB
     pub content: String,
+    #[serde(default)]
+    pub r#abstract: String,
     pub status: String,
     pub created_at: String,
     pub updated_at: String,
@@ -57,6 +59,7 @@ pub struct AdminPost {
     pub category: String,
     pub tags: Vec<String>,
     pub content: String,
+    pub r#abstract: String,
     pub status: String,
     pub created_at: String,
     pub updated_at: String,
@@ -73,6 +76,7 @@ impl From<PostRow> for AdminPost {
             category: row.category,
             tags,
             content: row.content,
+            r#abstract: row.r#abstract,
             status: row.status,
             created_at: row.created_at,
             updated_at: row.updated_at,
@@ -88,6 +92,7 @@ pub struct Post {
     pub category: String,
     pub tags: Vec<String>,
     pub content: String, // rendered HTML
+    pub r#abstract: String, // rendered HTML
     pub created_at: String,
     pub updated_at: String,
     #[serde(default)]
@@ -101,6 +106,7 @@ pub struct CreatePostRequest {
     pub category: Option<String>,
     pub tags: Option<Vec<String>>,
     pub content: String,
+    pub r#abstract: Option<String>,
     pub status: Option<String>,
 }
 
@@ -111,6 +117,7 @@ pub struct UpdatePostRequest {
     pub category: Option<String>,
     pub tags: Option<Vec<String>>,
     pub content: Option<String>,
+    pub r#abstract: Option<String>,
     pub status: Option<String>,
 }
 
@@ -153,6 +160,7 @@ pub struct SearchResultRow {
     pub category: String,
     pub tags: String,
     pub content: String,
+    pub r#abstract: String,
     pub status: String,
     pub created_at: String,
     pub updated_at: String,

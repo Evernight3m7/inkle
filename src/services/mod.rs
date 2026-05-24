@@ -109,7 +109,7 @@ async fn search_fts5(
 
     let select_sql = format!(
         "SELECT p.id, p.title, p.slug, p.category, p.tags, p.content, \
-                p.status, p.created_at, p.updated_at, \
+                p.abstract, p.status, p.created_at, p.updated_at, \
                 snippet(posts_fts, 1, '<mark>', '</mark>', '...', 48) as snippet \
          FROM posts_fts \
          JOIN posts p ON posts_fts.rowid = p.id \
@@ -142,11 +142,12 @@ async fn search_fts5(
                 category: row.get(3),
                 tags: row.get(4),
                 content: row.get(5),
-                status: row.get(6),
-                created_at: row.get(7),
-                updated_at: row.get(8),
+                r#abstract: row.get(6),
+                status: row.get(7),
+                created_at: row.get(8),
+                updated_at: row.get(9),
                 snippet: {
-                    let raw: String = row.get(9);
+                    let raw: String = row.get(10);
                     Some(sanitize_html_keep_marks(&raw))
                 },
             }
@@ -232,9 +233,11 @@ async fn search_like(
     let count_sql = format!(
         "SELECT COUNT(*) FROM posts \
          WHERE (title LIKE ? ESCAPE '\\' OR content LIKE ? ESCAPE '\\' \
+                OR abstract LIKE ? ESCAPE '\\' \
                 OR tags LIKE ? ESCAPE '\\' OR category LIKE ? ESCAPE '\\'){status_filter}"
     );
     let total: i64 = sqlx::query_scalar(&count_sql)
+        .bind(&pattern)
         .bind(&pattern)
         .bind(&pattern)
         .bind(&pattern)
@@ -246,15 +249,17 @@ async fn search_like(
     log_search(db, raw_query, total).await;
 
     let select_sql = format!(
-        "SELECT id, title, slug, category, tags, content, \
+        "SELECT id, title, slug, category, tags, content, abstract, \
                 status, created_at, updated_at \
          FROM posts \
          WHERE (title LIKE ? ESCAPE '\\' OR content LIKE ? ESCAPE '\\' \
+                OR abstract LIKE ? ESCAPE '\\' \
                 OR tags LIKE ? ESCAPE '\\' OR category LIKE ? ESCAPE '\\'){status_filter} \
          ORDER BY created_at DESC \
          LIMIT ? OFFSET ?"
     );
     let rows = match sqlx::query(&select_sql)
+        .bind(&pattern)
         .bind(&pattern)
         .bind(&pattern)
         .bind(&pattern)
@@ -276,6 +281,7 @@ async fn search_like(
         .map(|row| {
             use sqlx::Row;
             let content: String = row.get(5);
+            let r#abstract: String = row.get(6);
             let snippet = generate_snippet(&content, sanitized, 24);
             SearchResultRow {
                 id: row.get(0),
@@ -284,9 +290,10 @@ async fn search_like(
                 category: row.get(3),
                 tags: row.get(4),
                 content,
-                status: row.get(6),
-                created_at: row.get(7),
-                updated_at: row.get(8),
+                r#abstract,
+                status: row.get(7),
+                created_at: row.get(8),
+                updated_at: row.get(9),
                 snippet: if snippet.is_empty() { None } else { Some(snippet) },
             }
         })

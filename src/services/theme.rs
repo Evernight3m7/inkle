@@ -136,6 +136,7 @@ pub fn load_tera(theme_name: &str) -> Tera {
 pub fn post_row_to_frontend(row: PostRow) -> Post {
     let tags: Vec<String> = serde_json::from_str(&row.tags).unwrap_or_default();
     let content = markdown::render_markdown(&row.content);
+    let r#abstract = markdown::render_markdown(&row.r#abstract);
 
     Post {
         title: row.title,
@@ -143,6 +144,7 @@ pub fn post_row_to_frontend(row: PostRow) -> Post {
         category: row.category,
         tags,
         content,
+        r#abstract,
         created_at: row.created_at,
         updated_at: row.updated_at,
         snippet: None,
