@@ -1,3 +1,25 @@
+// ── Mobile Menu ──
+
+function toggleMobileMenu() {
+    var menu = document.getElementById('mobile-menu');
+    var btn = document.querySelector('.topbar-menu-btn');
+    if (menu) {
+        menu.classList.toggle('open');
+        if (btn) {
+            btn.setAttribute('aria-expanded', menu.classList.contains('open'));
+        }
+    }
+}
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(e) {
+    var menu = document.getElementById('mobile-menu');
+    var btn = document.querySelector('.topbar-menu-btn');
+    if (menu && menu.classList.contains('open') && !menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        menu.classList.remove('open');
+    }
+});
+
 // ── Toast System ──
 
 function showToast(message, type, duration) {
@@ -296,10 +318,10 @@ async function saveSettings() {
         site_subtitle: document.getElementById('site-subtitle').value,
         posts_per_page: parseInt(document.getElementById('posts-per-page').value) || 10,
         social_links: socialLinks,
-        ai_base_url: (document.getElementById('ai-base-url') || {}).value || null,
-        ai_api_key: (document.getElementById('ai-api-key') || {}).value || null,
-        ai_model: (document.getElementById('ai-model') || {}).value || null,
-        ai_prompt: (document.getElementById('ai-prompt') || {}).value || null
+        ai_base_url: document.getElementById('ai-base-url').value || null,
+        ai_api_key: document.getElementById('ai-api-key').value || null,
+        ai_model: document.getElementById('ai-model').value || null,
+        ai_prompt: document.getElementById('ai-prompt').value || null
     };
 
     try {
@@ -539,32 +561,37 @@ function showAiWarningModal(message, showSettingsBtn) {
     var msgEl = document.getElementById('modal-message');
     var confirmBtn = document.getElementById('modal-confirm-btn');
     var actionsContainer = document.querySelector('.modal-actions');
-    var cancelBtn = actionsContainer ? actionsContainer.querySelector('.btn-secondary') : null;
 
-    if (!overlay || !msgEl) return;
+    if (!overlay || !msgEl || !actionsContainer) return;
 
     msgEl.textContent = message;
 
-    // Rebuild action buttons
-    if (actionsContainer) {
-        actionsContainer.innerHTML = '';
+    // Save original buttons for restoration
+    var originalHTML = actionsContainer.innerHTML;
 
-        var ignoreBtn = document.createElement('button');
-        ignoreBtn.className = 'btn btn-secondary';
-        ignoreBtn.textContent = 'Ignore';
-        ignoreBtn.onclick = function () { closeModal(); };
-        actionsContainer.appendChild(ignoreBtn);
+    // Build action buttons
+    actionsContainer.innerHTML = '';
 
-        if (showSettingsBtn) {
-            var settingsBtn = document.createElement('button');
-            settingsBtn.className = 'btn btn-primary';
-            settingsBtn.textContent = 'Go to Settings';
-            settingsBtn.onclick = function () {
-                closeModal();
-                window.location.href = '/admin/settings';
-            };
-            actionsContainer.appendChild(settingsBtn);
-        }
+    var ignoreBtn = document.createElement('button');
+    ignoreBtn.className = 'btn btn-secondary';
+    ignoreBtn.textContent = 'Ignore';
+    ignoreBtn.onclick = function () {
+        closeModal();
+        // Restore original buttons after close
+        setTimeout(function () { actionsContainer.innerHTML = originalHTML; }, 100);
+    };
+    actionsContainer.appendChild(ignoreBtn);
+
+    if (showSettingsBtn) {
+        var settingsBtn = document.createElement('button');
+        settingsBtn.className = 'btn btn-primary';
+        settingsBtn.textContent = 'Go to Settings';
+        settingsBtn.onclick = function () {
+            closeModal();
+            setTimeout(function () { actionsContainer.innerHTML = originalHTML; }, 100);
+            window.location.href = '/admin/settings';
+        };
+        actionsContainer.appendChild(settingsBtn);
     }
 
     overlay.style.display = 'flex';

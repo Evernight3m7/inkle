@@ -7,34 +7,39 @@
     <link rel="stylesheet" href="/static/admin/admin.css">
 </head>
 <body>
-    <div class="admin-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2><a href="/admin">{{ site_title }}</a></h2>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="/admin" class="nav-item {% if current_path == 'dashboard' or (current_path == 'editor' and not is_new) %}active{% endif %}">
-                    <span class="nav-icon">&#x1F4CB;</span> Posts
-                </a>
-                <a href="/admin/posts/new" class="nav-item {% if current_path == 'editor' and is_new %}active{% endif %}">
-                    <span class="nav-icon">&#x270F;&#xFE0F;</span> New Post
-                </a>
-                <a href="/admin/settings" class="nav-item {% if current_path == 'settings' %}active{% endif %}">
-                    <span class="nav-icon">&#x2699;&#xFE0F;</span> Settings
-                </a>
-                <a href="/admin/themes" class="nav-item {% if current_path == 'themes' %}active{% endif %}">
-                    <span class="nav-icon">&#x1F3A8;</span> Themes
-                </a>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="/admin" class="topbar-logo">{{ site_title }}</a>
+            <nav class="topbar-nav">
+                <a href="/admin" class="topbar-link {% if current_path == 'dashboard' or (current_path == 'editor' and not is_new) %}active{% endif %}">Posts</a>
+                <a href="/admin/posts/new" class="topbar-link {% if current_path == 'editor' and is_new %}active{% endif %}">New Post</a>
+                <a href="/admin/settings" class="topbar-link {% if current_path == 'settings' %}active{% endif %}">Settings</a>
+                <a href="/admin/themes" class="topbar-link {% if current_path == 'themes' %}active{% endif %}">Themes</a>
             </nav>
-            <div class="sidebar-footer">
-                <a href="/" target="_blank" class="nav-item">&#x1F310; View Site</a>
-                <button onclick="logout()" class="nav-item logout-btn">&#x1F6AA; Logout</button>
+            <div class="topbar-actions">
+                <a href="/" target="_blank" class="topbar-link">View Site</a>
+                <button onclick="logout()" class="topbar-link topbar-logout">Logout</button>
             </div>
-        </aside>
-        <main class="main-content">
-            {% block content %}{% endblock %}
-        </main>
+            <button class="topbar-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <div id="mobile-menu" class="mobile-menu">
+        <a href="/admin" class="mobile-link {% if current_path == 'dashboard' or (current_path == 'editor' and not is_new) %}active{% endif %}">Posts</a>
+        <a href="/admin/posts/new" class="mobile-link {% if current_path == 'editor' and is_new %}active{% endif %}">New Post</a>
+        <a href="/admin/settings" class="mobile-link {% if current_path == 'settings' %}active{% endif %}">Settings</a>
+        <a href="/admin/themes" class="mobile-link {% if current_path == 'themes' %}active{% endif %}">Themes</a>
+        <a href="/" target="_blank" class="mobile-link">View Site</a>
+        <button onclick="logout()" class="mobile-link mobile-logout">Logout</button>
     </div>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
 
     <div id="toast-container" class="toast-container"></div>
 

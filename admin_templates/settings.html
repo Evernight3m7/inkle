@@ -6,59 +6,65 @@
 </div>
 
 <div class="settings-grid">
-    <div class="card">
-        <form id="settings-form" onsubmit="return false;">
-            <div class="form-group">
-                <label for="site-title">Site Title</label>
-                <input type="text" id="site-title" class="input" value="{{ config.site_title }}">
-            </div>
-            <div class="form-group">
-                <label for="site-subtitle">Site Subtitle</label>
-                <input type="text" id="site-subtitle" class="input" value="{{ config.site_subtitle }}" placeholder="Optional">
-            </div>
-            <div class="form-group">
-                <label for="posts-per-page">Posts Per Page</label>
-                <input type="number" id="posts-per-page" class="input" min="1" max="100" value="{{ config.posts_per_page }}">
-            </div>
-            <div class="form-group">
-                <label>Social Links</label>
-                <div id="social-links-container">
-                    {% for key, value in config.social_links %}
-                    <div class="social-link-row">
-                        <input type="text" class="input social-key" value="{{ key }}" placeholder="Platform (e.g., github)">
-                        <input type="text" class="input social-value" value="{{ value }}" placeholder="URL">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">&times;</button>
-                    </div>
-                    {% endfor %}
+    <div class="settings-section">
+        <h2>Site</h2>
+        <div class="card">
+            <form id="settings-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="site-title">Site Title</label>
+                    <input type="text" id="site-title" class="input" value="{{ config.site_title }}">
                 </div>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="addSocialLink()" style="margin-top:8px;">+ Add Link</button>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
-        </form>
+                <div class="form-group">
+                    <label for="site-subtitle">Site Subtitle</label>
+                    <input type="text" id="site-subtitle" class="input" value="{{ config.site_subtitle }}" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label for="posts-per-page">Posts Per Page</label>
+                    <input type="number" id="posts-per-page" class="input" min="1" max="100" value="{{ config.posts_per_page }}">
+                </div>
+                <div class="form-group">
+                    <label>Social Links</label>
+                    <div id="social-links-container">
+                        {% for key, value in config.social_links %}
+                        <div class="social-link-row">
+                            <input type="text" class="input social-key" value="{{ key }}" placeholder="Platform (e.g., github)">
+                            <input type="text" class="input social-value" value="{{ value }}" placeholder="URL">
+                            <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">&times;</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-secondary btn-mt" onclick="addSocialLink()">+ Add Link</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="card" style="margin-top:20px;">
-        <h2 style="font-size:1rem;font-weight:600;margin-bottom:16px;">AI Summary Generation</h2>
-        <form id="ai-settings-form" onsubmit="return false;">
-            <div class="form-group">
-                <label for="ai-base-url">AI Base URL</label>
-                <input type="text" id="ai-base-url" class="input" value="{{ config.ai_base_url }}" placeholder="https://api.openai.com/v1">
-                <span class="form-hint">OpenAI-compatible API endpoint base URL</span>
-            </div>
-            <div class="form-group">
-                <label for="ai-api-key">AI API Key</label>
-                <input type="password" id="ai-api-key" class="input" value="" placeholder="{% if ai_key_configured %}Key configured (leave empty to keep current){% else %}sk-...{% endif %}">
-            </div>
-            <div class="form-group">
-                <label for="ai-model">AI Model</label>
-                <input type="text" id="ai-model" class="input" value="{{ config.ai_model }}" placeholder="gpt-4o-mini">
-            </div>
-            <div class="form-group">
-                <label for="ai-prompt">AI Prompt Template</label>
-                <textarea id="ai-prompt" class="textarea" rows="4" placeholder="请为以下文章生成一段100-150字的中文摘要，直接返回摘要内容，不要包含任何前缀或解释：\n\n{content}">{{ config.ai_prompt }}</textarea>
-                <span class="form-hint">Use <code>{content}</code> as placeholder for the article content</span>
-            </div>
-        </form>
+    <div class="settings-section">
+        <h2>AI Summary Generation</h2>
+        <div class="card">
+            <form id="ai-settings-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="ai-base-url">AI Base URL</label>
+                    <input type="text" id="ai-base-url" class="input" value="{{ config.ai_base_url }}" placeholder="https://api.openai.com/v1">
+                    <span class="form-hint">OpenAI-compatible API endpoint base URL</span>
+                </div>
+                <div class="form-group">
+                    <label for="ai-api-key">AI API Key</label>
+                    <input type="password" id="ai-api-key" class="input" value="" placeholder="{% if ai_key_configured %}Key configured (leave empty to keep current){% else %}sk-...{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label for="ai-model">AI Model</label>
+                    <input type="text" id="ai-model" class="input" value="{{ config.ai_model }}" placeholder="gpt-4o-mini">
+                </div>
+                <div class="form-group form-group-last">
+                    <label for="ai-prompt">AI Prompt Template</label>
+                    <textarea id="ai-prompt" class="textarea" rows="4" placeholder="请为以下文章生成一段100-150字的中文摘要，直接返回摘要内容，不要包含任何前缀或解释：\n\n{content}">{{ config.ai_prompt }}</textarea>
+                    <span class="form-hint">Use <code>{content}</code> as placeholder for the article content</span>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<button type="button" class="btn btn-primary btn-mt" onclick="saveSettings()">Save Settings</button>
 {% endblock %}
