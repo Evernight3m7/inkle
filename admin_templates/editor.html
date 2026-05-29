@@ -28,7 +28,10 @@
 
         <aside class="editor-sidebar card">
             <div class="form-group">
-                <label for="post-abstract">Abstract</label>
+                <label for="post-abstract">
+                    Abstract
+                    <button type="button" class="btn btn-sm btn-ai" onclick="checkAiConfigBeforeGenerate()" id="btn-ai-summary" title="AI generate summary from content">AI Generate</button>
+                </label>
                 <textarea id="post-abstract" class="textarea" rows="4" placeholder="Brief summary (Markdown supported)">{{ post.abstract }}</textarea>
             </div>
             <div class="form-group">

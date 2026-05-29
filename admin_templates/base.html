@@ -48,6 +48,9 @@
         </div>
     </div>
 
+    {% if ai_warning %}
+    <script>document.addEventListener('DOMContentLoaded', function() { showAiConfigWarning(); });</script>
+    {% endif %}
     <script src="/static/admin/admin.js"></script>
 </body>
 </html>

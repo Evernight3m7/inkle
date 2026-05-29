@@ -295,7 +295,11 @@ async function saveSettings() {
         site_title: document.getElementById('site-title').value,
         site_subtitle: document.getElementById('site-subtitle').value,
         posts_per_page: parseInt(document.getElementById('posts-per-page').value) || 10,
-        social_links: socialLinks
+        social_links: socialLinks,
+        ai_base_url: (document.getElementById('ai-base-url') || {}).value || null,
+        ai_api_key: (document.getElementById('ai-api-key') || {}).value || null,
+        ai_model: (document.getElementById('ai-model') || {}).value || null,
+        ai_prompt: (document.getElementById('ai-prompt') || {}).value || null
     };
 
     try {
@@ -456,3 +460,112 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Silent fail — category autocomplete is optional
     }
 });
+
+// ── AI Summary Generation ──
+
+var _aiGenerating = false;
+
+async function checkAiConfigBeforeGenerate() {
+    // First, check if both are configured by fetching current state
+    // We do a quick check by sending the generate request; the server will
+    // tell us if config is incomplete with a 400 error.
+    // But we also want to catch the case where both are empty BEFORE making
+    // the request, to give a better UX.
+
+    var content = document.getElementById('post-content').value.trim();
+    if (!content) {
+        showToast('Please write some content first', 'error');
+        return;
+    }
+
+    await generateAiSummary();
+}
+
+async function generateAiSummary() {
+    if (_aiGenerating) return;
+    _aiGenerating = true;
+    var btn = document.getElementById('btn-ai-summary');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Generating...';
+    }
+
+    var content = document.getElementById('post-content').value;
+
+    try {
+        var res = await fetch('/api/admin/ai/generate-summary', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: content })
+        });
+
+        if (res.ok) {
+            var data = await res.json();
+            document.getElementById('post-abstract').value = data.summary;
+            showToast('Summary generated', 'success');
+        } else {
+            var data = await res.json().catch(function () { return { error: 'Unknown error' }; });
+            if (res.status === 400 && data.error && data.error.indexOf('AI_CONFIG_INCOMPLETE') === 0) {
+                showAiWarningModal(
+                    'AI configuration is incomplete. Please configure AI Base URL and API Key in Settings.',
+                    true
+                );
+            } else if (res.status === 429) {
+                showToast('Please wait before generating another summary', 'error');
+            } else {
+                showToast(data.error || 'Failed to generate summary', 'error');
+            }
+        }
+    } catch (err) {
+        showToast('Network error', 'error');
+    } finally {
+        _aiGenerating = false;
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'AI Generate';
+        }
+    }
+}
+
+function showAiConfigWarning() {
+    showAiWarningModal(
+        'AI Base URL and API Key are only partially configured. Please complete the configuration in Settings.',
+        true
+    );
+}
+
+function showAiWarningModal(message, showSettingsBtn) {
+    var overlay = document.getElementById('modal-overlay');
+    var msgEl = document.getElementById('modal-message');
+    var confirmBtn = document.getElementById('modal-confirm-btn');
+    var actionsContainer = document.querySelector('.modal-actions');
+    var cancelBtn = actionsContainer ? actionsContainer.querySelector('.btn-secondary') : null;
+
+    if (!overlay || !msgEl) return;
+
+    msgEl.textContent = message;
+
+    // Rebuild action buttons
+    if (actionsContainer) {
+        actionsContainer.innerHTML = '';
+
+        var ignoreBtn = document.createElement('button');
+        ignoreBtn.className = 'btn btn-secondary';
+        ignoreBtn.textContent = 'Ignore';
+        ignoreBtn.onclick = function () { closeModal(); };
+        actionsContainer.appendChild(ignoreBtn);
+
+        if (showSettingsBtn) {
+            var settingsBtn = document.createElement('button');
+            settingsBtn.className = 'btn btn-primary';
+            settingsBtn.textContent = 'Go to Settings';
+            settingsBtn.onclick = function () {
+                closeModal();
+                window.location.href = '/admin/settings';
+            };
+            actionsContainer.appendChild(settingsBtn);
+        }
+    }
+
+    overlay.style.display = 'flex';
+}

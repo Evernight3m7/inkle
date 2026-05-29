@@ -24,6 +24,12 @@ async fn load_config(state: &AppState) -> SiteConfig {
     services::theme::load_site_config(state).await
 }
 
+fn ai_config_partial(config: &SiteConfig) -> bool {
+    let has_url = !config.ai_base_url.is_empty();
+    let has_key = !config.ai_api_key.is_empty();
+    has_url != has_key
+}
+
 fn render_admin(
     state: &AppState,
     template: &str,
@@ -171,6 +177,7 @@ pub async fn dashboard(
     ctx.insert("query", &query);
     ctx.insert("site_title", &config.site_title);
     ctx.insert("current_path", "dashboard");
+    ctx.insert("ai_warning", &ai_config_partial(&config));
 
     match render_admin(&state, "dashboard.html", &ctx) {
         Ok(html) => html.into_response(),
@@ -192,6 +199,7 @@ pub async fn new_post(
     ctx.insert("post", &empty_post);
     ctx.insert("site_title", &config.site_title);
     ctx.insert("current_path", "editor");
+    ctx.insert("ai_warning", &ai_config_partial(&config));
 
     match render_admin(&state, "editor.html", &ctx) {
         Ok(html) => html.into_response(),
@@ -222,6 +230,7 @@ pub async fn edit_post(
             ctx.insert("post", &post);
             ctx.insert("site_title", &config.site_title);
             ctx.insert("current_path", "editor");
+            ctx.insert("ai_warning", &ai_config_partial(&config));
 
             match render_admin(&state, "editor.html", &ctx) {
                 Ok(html) => html.into_response(),
@@ -252,6 +261,7 @@ pub async fn settings_page(
     ctx.insert("config", &config);
     ctx.insert("site_title", &config.site_title);
     ctx.insert("current_path", "settings");
+    ctx.insert("ai_warning", &ai_config_partial(&config));
 
     match render_admin(&state, "settings.html", &ctx) {
         Ok(html) => html.into_response(),
@@ -278,6 +288,7 @@ pub async fn themes_page(
     ctx.insert("active", &active);
     ctx.insert("site_title", &config.site_title);
     ctx.insert("current_path", "themes");
+    ctx.insert("ai_warning", &ai_config_partial(&config));
 
     match render_admin(&state, "themes.html", &ctx) {
         Ok(html) => html.into_response(),

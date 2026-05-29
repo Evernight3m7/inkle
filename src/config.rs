@@ -5,6 +5,8 @@ pub struct EnvConfig {
     pub admin_password: String,
     pub jwt_secret: String,
     pub database_url: String,
+    pub ai_base_url: String,
+    pub ai_api_key: String,
 }
 
 impl EnvConfig {
@@ -23,6 +25,8 @@ impl EnvConfig {
                 .expect("JWT_SECRET environment variable is required"),
             database_url: env::var("DATABASE_URL")
                 .unwrap_or_else(|_| "sqlite:data.db?mode=rwc".to_string()),
+            ai_base_url: env::var("AI_BASE_URL").unwrap_or_default(),
+            ai_api_key: env::var("AI_API_KEY").unwrap_or_default(),
         }
     }
 }

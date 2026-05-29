@@ -69,6 +69,31 @@ pub async fn update_settings(
             .await;
     }
 
+    if let Some(v) = &body.ai_base_url {
+        let _ = sqlx::query("INSERT OR REPLACE INTO configs (key, value) VALUES ('ai_base_url', ?)")
+            .bind(v.trim())
+            .execute(&state.db)
+            .await;
+    }
+    if let Some(v) = &body.ai_api_key {
+        let _ = sqlx::query("INSERT OR REPLACE INTO configs (key, value) VALUES ('ai_api_key', ?)")
+            .bind(v.trim())
+            .execute(&state.db)
+            .await;
+    }
+    if let Some(v) = &body.ai_model {
+        let _ = sqlx::query("INSERT OR REPLACE INTO configs (key, value) VALUES ('ai_model', ?)")
+            .bind(v.trim())
+            .execute(&state.db)
+            .await;
+    }
+    if let Some(v) = &body.ai_prompt {
+        let _ = sqlx::query("INSERT OR REPLACE INTO configs (key, value) VALUES ('ai_prompt', ?)")
+            .bind(v)
+            .execute(&state.db)
+            .await;
+    }
+
     // Invalidate site config cache so the next load_site_config re-fetches from DB
     *state.site_config_cache.write().unwrap_or_else(|e| e.into_inner()) = None;
     // If active_theme was changed, also invalidate theme list cache

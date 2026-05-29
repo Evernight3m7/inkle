@@ -598,6 +598,32 @@ a:hover { text-decoration: underline; }
 .login-error { color: var(--danger); margin-top: 12px; font-size: 0.8125rem; }
 .login-card .form-group { text-align: left; }
 
+/* ── AI Button ── */
+.btn-ai {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border: none;
+    font-weight: 500;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+.btn-ai:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+}
+.btn-ai:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Form Hint ── */
+.form-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
 /* ── Utility ── */
 .text-secondary { color: var(--text-muted); }
 .text-muted { color: var(--text-muted); }

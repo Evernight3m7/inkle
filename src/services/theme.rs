@@ -171,6 +171,10 @@ pub async fn load_site_config(state: &AppState) -> SiteConfig {
     let mut active_theme = String::new();
     let mut posts_per_page: u32 = 10;
     let mut social_links = HashMap::new();
+    let mut ai_base_url = String::new();
+    let mut ai_api_key = String::new();
+    let mut ai_model = String::new();
+    let mut ai_prompt = String::new();
 
     for (key, value) in rows {
         match key.as_str() {
@@ -185,8 +189,31 @@ pub async fn load_site_config(state: &AppState) -> SiteConfig {
                     .map(|(k, v)| (k, normalize_url(&v)))
                     .collect();
             }
+            "ai_base_url" => ai_base_url = value,
+            "ai_api_key" => ai_api_key = value,
+            "ai_model" => ai_model = value,
+            "ai_prompt" => ai_prompt = value,
             _ => {}
         }
+    }
+
+    // Trim whitespace from AI config values (common copy-paste issue)
+    ai_base_url = ai_base_url.trim().to_string();
+    ai_api_key = ai_api_key.trim().to_string();
+    ai_model = ai_model.trim().to_string();
+    ai_prompt = ai_prompt.trim().to_string();
+
+    if ai_base_url.is_empty() {
+        ai_base_url = state.env.ai_base_url.clone();
+    }
+    if ai_api_key.is_empty() {
+        ai_api_key = state.env.ai_api_key.clone();
+    }
+    if ai_model.is_empty() {
+        ai_model = "gpt-4o-mini".into();
+    }
+    if ai_prompt.is_empty() {
+        ai_prompt = "请为以下文章生成一段100-150字的中文摘要，直接返回摘要内容，不要包含任何前缀或解释：\n\n{content}".into();
     }
 
     let config = SiteConfig {
@@ -195,6 +222,10 @@ pub async fn load_site_config(state: &AppState) -> SiteConfig {
         active_theme,
         posts_per_page,
         social_links,
+        ai_base_url,
+        ai_api_key,
+        ai_model,
+        ai_prompt,
     };
 
     // Populate cache

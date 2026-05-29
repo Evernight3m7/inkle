@@ -1,5 +1,6 @@
 pub mod admin_pages;
 pub mod admin_post;
+pub mod ai;
 pub mod auth;
 pub mod frontend;
 pub mod preview;

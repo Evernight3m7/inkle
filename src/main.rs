@@ -54,6 +54,7 @@ async fn main() {
         active_theme: Arc::new(RwLock::new(active_theme)),
         admin_templates: admin_tera,
         login_rate_limiter: Arc::new(tokio::sync::Mutex::new(HashMap::new())),
+        ai_rate_limiter: Arc::new(tokio::sync::Mutex::new(HashMap::new())),
         site_config_cache: Arc::new(RwLock::new(None)),
         theme_list_cache: Arc::new(RwLock::new(None)),
     };
@@ -84,7 +85,11 @@ async fn main() {
             "/api/admin/settings",
             get(handlers::settings::get_settings).put(handlers::settings::update_settings),
         )
-        .route("/api/admin/stats", get(handlers::settings::get_stats));
+        .route("/api/admin/stats", get(handlers::settings::get_stats))
+        .route(
+            "/api/admin/ai/generate-summary",
+            axum::routing::post(handlers::ai::generate_summary),
+        );
 
     // ── Theme admin routes ──
 

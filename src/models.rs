@@ -22,6 +22,22 @@ pub struct SiteConfig {
     pub active_theme: String,
     pub posts_per_page: u32,
     pub social_links: HashMap<String, String>,
+    #[serde(default)]
+    pub ai_base_url: String,
+    #[serde(default)]
+    pub ai_api_key: String,
+    #[serde(default = "default_ai_model")]
+    pub ai_model: String,
+    #[serde(default = "default_ai_prompt")]
+    pub ai_prompt: String,
+}
+
+fn default_ai_model() -> String {
+    "gpt-4o-mini".into()
+}
+
+fn default_ai_prompt() -> String {
+    "请为以下文章生成一段100-150字的中文摘要，直接返回摘要内容，不要包含任何前缀或解释：\n\n{content}".into()
 }
 
 #[derive(Debug, Deserialize)]
@@ -31,6 +47,10 @@ pub struct UpdateSettingsRequest {
     pub active_theme: Option<String>,
     pub posts_per_page: Option<u32>,
     pub social_links: Option<HashMap<String, String>>,
+    pub ai_base_url: Option<String>,
+    pub ai_api_key: Option<String>,
+    pub ai_model: Option<String>,
+    pub ai_prompt: Option<String>,
 }
 
 // ── Posts ──
@@ -214,4 +234,16 @@ pub struct GlobalContext {
     pub config: SiteConfig,
     pub current_theme: String,
     pub current_url: String,
+}
+
+// ── AI ──
+
+#[derive(Debug, Deserialize)]
+pub struct AiGenerateRequest {
+    pub content: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AiGenerateResponse {
+    pub summary: String,
 }

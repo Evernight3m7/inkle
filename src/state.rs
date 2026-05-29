@@ -17,6 +17,8 @@ pub struct AppState {
     pub admin_templates: Tera,
     pub login_rate_limiter:
         Arc<tokio::sync::Mutex<HashMap<String, (u32, std::time::Instant)>>>,
+    pub ai_rate_limiter:
+        Arc<tokio::sync::Mutex<HashMap<String, (u32, std::time::Instant)>>>,
     pub site_config_cache: Arc<RwLock<Option<SiteConfig>>>,
     pub theme_list_cache: Arc<RwLock<Option<Vec<ThemeManifest>>>>,
 }

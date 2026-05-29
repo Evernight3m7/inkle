@@ -1,7 +1,7 @@
 {
     "name": "nord",
-    "title": "Nord",
-    "version": "1.0.0",
+    "title": "Nocturne",
+    "version": "2.0.0",
     "author": "Inkle",
-    "description": "A clean, minimal dark theme inspired by the Nord color palette."
+    "description": "An atmospheric dark theme inspired by late-night reading sessions. Deep charcoal backgrounds with warm amber accents, refined serif typography, and subtle ambient glow create an intimate, focused reading experience."
 }
