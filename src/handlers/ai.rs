@@ -1,5 +1,8 @@
 use axum::{extract::State, http::StatusCode, Json};
 use serde_json::Value;
+use std::net::SocketAddr;
+
+use axum::extract::ConnectInfo;
 
 use crate::handlers::auth::AuthUser;
 use crate::models::{AiGenerateRequest, AiGenerateResponse, ErrorResponse};
@@ -10,6 +13,7 @@ const MAX_CONTENT_LENGTH: usize = 50_000;
 
 pub async fn generate_summary(
     _auth: AuthUser,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(state): State<AppState>,
     Json(body): Json<AiGenerateRequest>,
 ) -> Result<Json<AiGenerateResponse>, (StatusCode, Json<ErrorResponse>)> {
@@ -32,28 +36,34 @@ pub async fn generate_summary(
     }
 
     // Rate limit: 10 requests per 60 seconds per IP
-    // Rate limiting is handled at the auth level — each AuthUser is a valid
-    // admin, but we still apply a simple cooldown to prevent rapid-fire calls.
     {
         let mut limiter = state.ai_rate_limiter.lock().await;
-        let key = "global";
-        let (count, time) = limiter
-            .get(key)
-            .cloned()
-            .unwrap_or((0, std::time::Instant::now()));
-        let elapsed = time.elapsed().as_secs();
-        if elapsed < 60 && count >= 10 {
-            return Err((
-                StatusCode::TOO_MANY_REQUESTS,
-                Json(ErrorResponse {
-                    error: "Too many requests. Please wait before generating another summary.".into(),
-                }),
-            ));
-        }
-        if elapsed >= 60 {
-            limiter.insert(key.to_string(), (1, std::time::Instant::now()));
+        let now = std::time::Instant::now();
+        let ip = addr.ip().to_string();
+
+        // Clean up expired entries
+        limiter.retain(|_, (_, timestamp)| {
+            now.duration_since(*timestamp).as_secs() < 60
+        });
+
+        let entry = limiter.get(&ip).map(|(c, t)| (*c, *t));
+        if let Some((count, time)) = entry {
+            let elapsed = now.duration_since(time).as_secs();
+            if elapsed < 60 && count >= 10 {
+                return Err((
+                    StatusCode::TOO_MANY_REQUESTS,
+                    Json(ErrorResponse {
+                        error: "Too many requests. Please wait before generating another summary.".into(),
+                    }),
+                ));
+            }
+            if elapsed >= 60 {
+                limiter.insert(ip, (1, now));
+            } else {
+                limiter.insert(ip, (count + 1, time));
+            }
         } else {
-            limiter.insert(key.to_string(), (count + 1, time));
+            limiter.insert(ip, (1, now));
         }
     }
 

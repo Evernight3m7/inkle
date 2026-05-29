@@ -262,6 +262,7 @@ pub async fn settings_page(
     ctx.insert("site_title", &config.site_title);
     ctx.insert("current_path", "settings");
     ctx.insert("ai_warning", &ai_config_partial(&config));
+    ctx.insert("ai_key_configured", &!config.ai_api_key.is_empty());
 
     match render_admin(&state, "settings.html", &ctx) {
         Ok(html) => html.into_response(),
