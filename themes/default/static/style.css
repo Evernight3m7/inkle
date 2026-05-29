@@ -216,7 +216,7 @@ body {
 .post-card:first-of-type { padding-top: 0; }
 .post-card:hover {
     background: linear-gradient(90deg, rgba(188,90,62,0.02) 0%, transparent 10%);
-    padding-left: 16px;
+    transform: translateX(16px);
 }
 
 .post-card h2 {
@@ -236,7 +236,7 @@ body {
     transition: background-size 0.3s ease;
     padding-bottom: 2px;
 }
-.post-card h2 a:hover {
+.post-card:hover h2 a {
     color: var(--text);
     background-size: 100% 1px;
 }
@@ -854,7 +854,7 @@ a.tag-badge:hover {
 /* ── Animations ── */
 @keyframes page-fade-in {
     from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; }
 }
 .site-main {
     animation: page-fade-in 0.4s ease;
@@ -869,8 +869,12 @@ a.tag-badge:hover {
 }
 
 /* Staggered post list animation */
+@keyframes post-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 .post-card {
-    animation: page-fade-in 0.5s ease both;
+    animation: post-fade-in 0.5s ease both;
 }
 .post-card:nth-child(1) { animation-delay: 0.05s; }
 .post-card:nth-child(2) { animation-delay: 0.1s; }
@@ -897,7 +901,7 @@ a.tag-badge:hover {
     .header-inner { padding: 0 16px; }
     .site-main { padding: 0 16px 60px; }
     .post-card { padding: 24px 0; }
-    .post-card:hover { padding-left: 8px; }
+    .post-card:hover { transform: translateX(8px); }
     .post-card h2 { font-size: 1.3rem; }
     .post-detail-header h1 { font-size: 1.8rem; }
     .prose { font-size: 1.1rem; }
